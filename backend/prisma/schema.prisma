@@ -29,16 +29,23 @@ model User {
 }
 
 model Product {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
-  ratings     Int
-  reviews     Int
-  price       Int
-  image       String
-  category    String
-  deals       Deal[]
+  id             Int     @id @default(autoincrement())
+  title          String
+  description    String
+  originalPrice  Int
+  discountPrice  Int
+  discount       String    // e.g., "29% OFF"
+  rating         Float
+  reviews        Int
+  category       String
+  location       String
+  seller         String
+  delivery       String    // e.g., "₹50 Delivery"
+  inStock        Boolean   @default(true)
+  image          String?
+  deals          Deal[]
 }
+
 
 model Scheme {
   id           Int      @id @default(autoincrement())

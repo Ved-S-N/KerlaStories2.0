@@ -62,7 +62,7 @@ export default function Chat() {
         body: JSON.stringify({
           message,
           language,
-          userId: "64f1e6f9c9b2ad9c39a5f001", // replace with logged in user id
+          userId: "64f1e6f9c9b2ad9c39a5f001",
         }),
       });
 
