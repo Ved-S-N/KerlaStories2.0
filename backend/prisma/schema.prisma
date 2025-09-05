@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "sqlserver"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String    @unique
+  password          String
+  role              String    @default("participant")
+  isEmailVerified   Boolean   @default(false)
+  verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // back relations
+  userSchemes   UserSchemeEligibility[]
+  chatSessions  ChatSession[]
+  legalRequests LegalRequest[]
+  alerts        Alert[]
+}
+
+model Product {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  ratings     Int
+  reviews     Int
+  price       Int
+  image       String
+  category    String
+  deals       Deal[]
+}
+
+model Scheme {
+  id           Int      @id @default(autoincrement())
+  name         String
+  income_limit Int? // nullable for "none"
+  crop_type    String   @default("all")
+  region       String   @default("all")
+  deadline     String   @default("ongoing")
+  description  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userSchemes UserSchemeEligibility[]
+}
+
+model UserSchemeEligibility {
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  schemeId Int
+  eligible Boolean
+
+  user   User   @relation(fields: [userId], references: [id])
+  scheme Scheme @relation(fields: [schemeId], references: [id])
+}
+
+model Deal {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  title     String
+  discount  Int
+  validTill DateTime
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model ChatSession {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  language  String
+  startedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model LegalRequest {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  subject     String
+  description String
+  status      String
+  createdAt   DateTime @default(now())
+
+  user        User              @relation(fields: [userId], references: [id])
+  assignments LegalAssignment[]
+}
+
+model LawFirm {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String
+  phone String
+
+  assignments LegalAssignment[]
+}
+
+model LegalAssignment {
+  id             Int      @id @default(autoincrement())
+  legalRequestId Int
+  lawFirmId      Int
+  assignedAt     DateTime @default(now())
+
+  legalRequest LegalRequest @relation(fields: [legalRequestId], references: [id])
+  lawFirm      LawFirm      @relation(fields: [lawFirmId], references: [id])
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  region      String
+  publishedAt DateTime
+}
+
+model Alert {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  title     String
+  message   String
+  alertType String
+  timestamp DateTime @default(now())
+  region    String
+
+  user User? @relation(fields: [userId], references: [id])
+}

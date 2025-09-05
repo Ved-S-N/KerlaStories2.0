@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "name": "PM-Kisan Samman Nidhi",
+    "income_limit": 200000,
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-09-30",
+    "description": "₹6,000 annual income support to small and marginal farmers."
+  },
+  {
+    "id": 2,
+    "name": "Kisan Credit Card (KCC)",
+    "income_limit": 500000,
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-12-31",
+    "description": "Short-term loans for crop production and related activities."
+  },
+  {
+    "id": 3,
+    "name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-10-15",
+    "description": "Crop insurance against natural calamities and pests."
+  },
+  {
+    "id": 4,
+    "name": "Soil Health Card Scheme",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-11-01",
+    "description": "Provides soil testing and recommendations for nutrient management."
+  },
+  {
+    "id": 5,
+    "name": "Paramparagat Krishi Vikas Yojana",
+    "income_limit": "none",
+    "crop_type": "organic",
+    "region": "all",
+    "deadline": "2026-01-15",
+    "description": "Promotes organic farming and cluster-based approaches."
+  },
+  {
+    "id": 6,
+    "name": "eNAM – National Agriculture Market",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "ongoing",
+    "description": "Online trading platform for agricultural commodities."
+  },
+  {
+    "id": 7,
+    "name": "Rashtriya Krishi Vikas Yojana",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-12-15",
+    "description": "Funding support for states to improve agriculture infrastructure."
+  },
+  {
+    "id": 8,
+    "name": "PM Kusum Yojana",
+    "income_limit": 800000,
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2026-03-31",
+    "description": "Subsidy for installing solar pumps and grid-connected solar plants."
+  },
+  {
+    "id": 9,
+    "name": "Gramin Bhandaran Yojana",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-12-30",
+    "description": "Financial assistance for rural godowns/storage facilities."
+  },
+  {
+    "id": 10,
+    "name": "PM Krishi Sinchai Yojana",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-09-20",
+    "description": "Ensures irrigation for every farm (Har Khet Ko Pani)."
+  },
+  {
+    "id": 11,
+    "name": "Mahatma Gandhi National Rural Employment Guarantee Act (MGNREGA)",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "rural",
+    "deadline": "ongoing",
+    "description": "Wage employment support including agriculture-related work."
+  },
+  {
+    "id": 12,
+    "name": "National Mission on Edible Oils",
+    "income_limit": "none",
+    "crop_type": "oilseeds",
+    "region": "all",
+    "deadline": "2025-12-05",
+    "description": "Supports oilseed farmers with improved technology and seeds."
+  },
+  {
+    "id": 13,
+    "name": "Blue Revolution Scheme",
+    "income_limit": "none",
+    "crop_type": "fisheries",
+    "region": "all",
+    "deadline": "2026-02-28",
+    "description": "Development of fisheries and aquaculture infrastructure."
+  },
+  {
+    "id": 14,
+    "name": "National Bamboo Mission",
+    "income_limit": "none",
+    "crop_type": "bamboo",
+    "region": "all",
+    "deadline": "2026-03-15",
+    "description": "Promotes bamboo farming and market linkages."
+  },
+  {
+    "id": 15,
+    "name": "National Beekeeping and Honey Mission",
+    "income_limit": "none",
+    "crop_type": "beekeeping",
+    "region": "all",
+    "deadline": "2025-11-20",
+    "description": "Support for scientific beekeeping and honey production."
+  },
+  {
+    "id": 16,
+    "name": "PM Awas Yojana (Rural Farmers)",
+    "income_limit": 300000,
+    "crop_type": "all",
+    "region": "rural",
+    "deadline": "2025-12-10",
+    "description": "Subsidy for housing construction in rural areas."
+  },
+  {
+    "id": 17,
+    "name": "National Horticulture Mission",
+    "income_limit": "none",
+    "crop_type": "fruits",
+    "region": "all",
+    "deadline": "2025-12-22",
+    "description": "Promotes horticulture crops with technical support."
+  },
+  {
+    "id": 18,
+    "name": "PM Garib Kalyan Anna Yojana",
+    "income_limit": 250000,
+    "crop_type": "all",
+    "region": "all",
+    "deadline": "2025-09-25",
+    "description": "Free food grains for eligible low-income families."
+  },
+  {
+    "id": 19,
+    "name": "National Livestock Mission",
+    "income_limit": "none",
+    "crop_type": "livestock",
+    "region": "all",
+    "deadline": "2026-01-20",
+    "description": "Support for dairy, poultry, and livestock farmers."
+  },
+  {
+    "id": 20,
+    "name": "PM Gram Sadak Yojana",
+    "income_limit": "none",
+    "crop_type": "all",
+    "region": "rural",
+    "deadline": "ongoing",
+    "description": "Infrastructure scheme improving rural roads for farmers."
+  }
+]
