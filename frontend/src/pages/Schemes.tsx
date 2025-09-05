@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -8,6 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   FileText,
   ArrowRight,
@@ -45,6 +52,29 @@ export default function Schemes() {
   const [schemes, setSchemes] = useState<Scheme[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Filter states
+  const [selectedIncomeLimit, setSelectedIncomeLimit] = useState<string>("");
+  const [selectedCropType, setSelectedCropType] = useState<string>("");
+  const [selectedRegion, setSelectedRegion] = useState<string>("");
+  const [selectedDeadline, setSelectedDeadline] = useState<string>("");
+
+  // Options states
+  const [incomeOptions, setIncomeOptions] = useState<string[]>([]);
+  const [cropOptions, setCropOptions] = useState<string[]>([]);
+  const [regionOptions, setRegionOptions] = useState<string[]>([]);
+  const [deadlineOptions, setDeadlineOptions] = useState<string[]>([]);
+
+  // Helper function to get month-year from deadline string
+  const getMonthYear = (deadline: string) => {
+    try {
+      const date = new Date(deadline);
+      if (isNaN(date.getTime())) return "Ongoing";
+      return date.toLocaleString("default", { month: "long", year: "numeric" });
+    } catch {
+      return "Ongoing";
+    }
+  };
+
   useEffect(() => {
     const fetchSchemes = async () => {
       try {
@@ -54,6 +84,27 @@ export default function Schemes() {
 
         // ✅ update state here
         setSchemes(data);
+
+        // Compute filter options
+        const incomes = [
+          ...new Set(
+            (data as Scheme[]).map((s) => s.income_limit?.toString() || "None")
+          ),
+        ].sort();
+        const crops = [
+          ...new Set((data as Scheme[]).map((s) => s.crop_type)),
+        ].sort();
+        const regions = [
+          ...new Set((data as Scheme[]).map((s) => s.region)),
+        ].sort();
+        const deadlines = [
+          ...new Set((data as Scheme[]).map((s) => getMonthYear(s.deadline))),
+        ].sort();
+
+        setIncomeOptions(incomes);
+        setCropOptions(crops);
+        setRegionOptions(regions);
+        setDeadlineOptions(deadlines);
       } catch (err) {
         console.error("Error fetching schemes data:", err);
       } finally {
@@ -63,6 +114,32 @@ export default function Schemes() {
 
     fetchSchemes();
   }, []);
+
+  // Filtered schemes
+  const filteredSchemes = useMemo(() => {
+    return schemes.filter((scheme) => {
+      if (
+        selectedIncomeLimit &&
+        (scheme.income_limit?.toString() || "None") !== selectedIncomeLimit
+      )
+        return false;
+      if (selectedCropType && scheme.crop_type !== selectedCropType)
+        return false;
+      if (selectedRegion && scheme.region !== selectedRegion) return false;
+      if (
+        selectedDeadline &&
+        getMonthYear(scheme.deadline) !== selectedDeadline
+      )
+        return false;
+      return true;
+    });
+  }, [
+    schemes,
+    selectedIncomeLimit,
+    selectedCropType,
+    selectedRegion,
+    selectedDeadline,
+  ]);
 
   if (loading) {
     return (
@@ -106,14 +183,93 @@ export default function Schemes() {
           </CardContent>
         </Card> */}
 
+        {/* Filter Section */}
+        <div className="mb-6 flex flex-wrap gap-4 justify-center">
+          <Select
+            onValueChange={(value) =>
+              setSelectedIncomeLimit(value === "all" ? "" : value)
+            }
+            value={selectedIncomeLimit || "all"}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Income Limit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {incomeOptions.map((income) => (
+                <SelectItem key={income} value={income}>
+                  {income === "None" ? "No income limit" : `₹${income}`}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            onValueChange={(value) =>
+              setSelectedCropType(value === "all" ? "" : value)
+            }
+            value={selectedCropType || "all"}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Crop Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all"></SelectItem>
+              {cropOptions.map((crop) => (
+                <SelectItem key={crop} value={crop}>
+                  {crop}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            onValueChange={(value) =>
+              setSelectedRegion(value === "all" ? "" : value)
+            }
+            value={selectedRegion || "all"}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all"></SelectItem>
+              {regionOptions.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            onValueChange={(value) =>
+              setSelectedDeadline(value === "all" ? "" : value)
+            }
+            value={selectedDeadline || "all"}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Deadline" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {deadlineOptions.map((deadline) => (
+                <SelectItem key={deadline} value={deadline}>
+                  {deadline}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Schemes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {schemes.length === 0 ? (
+          {filteredSchemes.length === 0 ? (
             <p className="text-center col-span-3 text-muted-foreground">
               No schemes found.
             </p>
           ) : (
-            schemes.map((scheme) => (
+            filteredSchemes.map((scheme) => (
               <Card
                 key={scheme.id}
                 className="bg-gradient-card hover-lift group h-full"

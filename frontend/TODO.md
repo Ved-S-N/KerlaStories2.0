@@ -1,15 +1,10 @@
-# Frontend Refactoring Tasks
+# TODO: Add Filter Dropdowns to Schemes.tsx
 
-## Completed Tasks
-- [x] Update Navbar to include Market Access and Legal Actions as primary features
-- [x] Replace Community Support with DigiLocker Linking in HeroSection features
-- [x] Ensure AI Assistant and Government Schemes & Loans are present as home page sections
-- [x] Maintain existing styling and responsiveness
-- [x] Preserve all hardcoded data (texts, labels, placeholders, mock content)
-- [x] Output clean, modular, and readable code
-
-## Followup Steps
-- [ ] Test the application to verify no breakage
-- [ ] Confirm layout responsiveness on different screen sizes
-- [ ] Verify all navigation links work correctly
-- [ ] Check that hardcoded data remains intact
+- [x] Import Select components from UI library
+- [x] Add state for selected filter values (selectedIncomeLimit, selectedCropType, selectedRegion, selectedDeadline)
+- [x] Add state for filter options (incomeOptions, cropOptions, regionOptions, deadlineOptions)
+- [x] Modify useEffect to compute unique options from fetched schemes
+- [x] Implement filtering logic to filter schemes based on selected values
+- [x] Add filter UI section above the schemes grid with Select dropdowns
+- [x] Update the schemes grid to display filtered schemes
+- [x] Test the functionality to ensure filters work and existing features are intact
