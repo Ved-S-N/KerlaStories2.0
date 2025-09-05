@@ -1,10 +1,19 @@
-# TODO: Add Filter Dropdowns to Schemes.tsx
+# TODO: Amazon-like Selling Page Implementation
 
-- [x] Import Select components from UI library
-- [x] Add state for selected filter values (selectedIncomeLimit, selectedCropType, selectedRegion, selectedDeadline)
-- [x] Add state for filter options (incomeOptions, cropOptions, regionOptions, deadlineOptions)
-- [x] Modify useEffect to compute unique options from fetched schemes
-- [x] Implement filtering logic to filter schemes based on selected values
-- [x] Add filter UI section above the schemes grid with Select dropdowns
-- [x] Update the schemes grid to display filtered schemes
-- [x] Test the functionality to ensure filters work and existing features are intact
+## Completed Tasks
+
+- [ ] Analyze current Deals.tsx and backend routes
+- [ ] Create comprehensive plan
+
+## Pending Tasks
+
+- [x] Create cart context and hook (useCart.tsx, CartContext.tsx)
+- [x] Create AddProduct page with form
+- [x] Update Deals.tsx to fetch from API and remove dummy data
+- [x] Implement add to cart functionality
+- [x] Add navigation for Add Product and View Cart
+- [ ] Create cart modal/page
+- [x] Update App.tsx with new routes
+- [ ] Test API integration
+- [ ] Implement cart persistence
+- [ ] Add product image handling

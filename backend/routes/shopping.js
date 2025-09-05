@@ -35,14 +35,44 @@ router.get("/:id", async (req, res) => {
 
 // Create new product
 router.post("/", async (req, res) => {
-  const { name, description, ratings, reviews, price, image, category } =
-    req.body;
+  const {
+    title,
+    description,
+    originalPrice,
+    discountPrice,
+    discount,
+    rating,
+    reviews,
+    category,
+    location,
+    seller,
+    delivery,
+    inStock,
+    image,
+  } = req.body;
+
   try {
     const newProduct = await prisma.product.create({
-      data: { name, description, ratings, reviews, price, image, category },
+      data: {
+        title,
+        description,
+        originalPrice: Number(originalPrice),
+        discountPrice: Number(discountPrice),
+        discount,
+        rating: parseFloat(rating),
+        reviews: Number(reviews),
+        category,
+        location,
+        seller,
+        delivery,
+        inStock: inStock ?? true, // defaults true
+        image,
+        deals: { connect: [] }, // relation fix
+      },
     });
     res.status(201).json(newProduct);
   } catch (error) {
+    console.error("❌ Prisma error:", error);
     res.status(500).json({ error: "Failed to create product" });
   }
 });
@@ -50,15 +80,44 @@ router.post("/", async (req, res) => {
 // Update product by id
 router.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const { name, description, ratings, reviews, price, image, category } =
-    req.body;
+  const {
+    title,
+    description,
+    originalPrice,
+    discountPrice,
+    discount,
+    rating,
+    reviews,
+    category,
+    location,
+    seller,
+    delivery,
+    inStock,
+    image,
+  } = req.body;
+
   try {
     const updatedProduct = await prisma.product.update({
       where: { id },
-      data: { name, description, ratings, reviews, price, image, category },
+      data: {
+        title,
+        description,
+        originalPrice: Number(originalPrice),
+        discountPrice: Number(discountPrice),
+        discount,
+        rating: parseFloat(rating),
+        reviews: Number(reviews),
+        category,
+        location,
+        seller,
+        delivery,
+        inStock: inStock ?? true,
+        image,
+      },
     });
     res.json(updatedProduct);
   } catch (error) {
+    console.error("❌ Prisma error:", error);
     res.status(500).json({ error: "Failed to update product" });
   }
 });
