@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Kerala Agricultural Platform - Green-themed Design System
+   All colors MUST be HSL. No white backgrounds - green gradients and earthy tones.
+*/
+
+@layer base {
+  :root {
+    /* Kerala Green Color Palette */
+    --background: 142 60% 8%;              /* Deep forest green background */
+    --foreground: 60 40% 95%;              /* Light cream text */
+
+    --card: 142 45% 12%;                   /* Darker green cards */
+    --card-foreground: 60 35% 90%;         /* Light text on cards */
+
+    --popover: 142 50% 10%;                /* Popover green */
+    --popover-foreground: 60 35% 90%;      /* Light popover text */
+
+    --primary: 142 70% 25%;                /* Rich emerald green */
+    --primary-foreground: 60 40% 95%;      /* Light text on primary */
+    
+    --primary-glow: 142 60% 35%;           /* Lighter emerald for glows */
+    --primary-accent: 142 50% 45%;         /* Medium green for accents */
+
+    --secondary: 30 25% 22%;               /* Earthy brown */
+    --secondary-foreground: 60 35% 90%;    /* Light text on brown */
+
+    --muted: 142 35% 15%;                  /* Muted green */
+    --muted-foreground: 60 20% 65%;        /* Muted text */
+
+    --accent: 45 80% 55%;                  /* Golden yellow accent */
+    --accent-foreground: 30 25% 15%;       /* Dark text on yellow */
+
+    --destructive: 0 70% 45%;              /* Earthy red */
+    --destructive-foreground: 60 35% 90%;  /* Light text on red */
+
+    --border: 142 25% 20%;                 /* Subtle green border */
+    --input: 142 30% 18%;                  /* Input field green */
+    --ring: 142 70% 35%;                   /* Focus ring green */
+
+    --radius: 0.75rem;                     /* Slightly rounded corners */
+    
+    /* Kerala-inspired Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(142 60% 8%) 0%, hsl(142 70% 25%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(142 70% 25%) 0%, hsl(142 60% 35%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(45 80% 55%) 0%, hsl(35 70% 50%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(142 45% 12%) 0%, hsl(142 35% 15%) 100%);
+    
+    /* Shadows with green tint */
+    --shadow-soft: 0 4px 20px -4px hsl(142 40% 8% / 0.6);
+    --shadow-medium: 0 8px 30px -8px hsl(142 40% 8% / 0.7);
+    --shadow-strong: 0 20px 50px -12px hsl(142 40% 8% / 0.8);
+    --shadow-glow: 0 0 30px hsl(142 70% 35% / 0.3);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Darker Kerala theme for night mode */
+    --background: 142 70% 5%;               /* Deeper forest green */
+    --foreground: 60 40% 95%;               /* Light cream text */
+
+    --card: 142 55% 8%;                     /* Very dark green cards */
+    --card-foreground: 60 35% 90%;          /* Light text on cards */
+
+    --popover: 142 60% 6%;                  /* Dark popover */
+    --popover-foreground: 60 35% 90%;       /* Light popover text */
+
+    --primary: 142 75% 30%;                 /* Brighter emerald */
+    --primary-foreground: 60 40% 95%;       /* Light text on primary */
+    
+    --primary-glow: 142 65% 40%;            /* Brighter glow */
+    --primary-accent: 142 55% 50%;          /* Brighter accent */
+
+    --secondary: 30 30% 18%;                /* Darker brown */
+    --secondary-foreground: 60 35% 90%;     /* Light text on brown */
+
+    --muted: 142 40% 12%;                   /* Darker muted green */
+    --muted-foreground: 60 20% 65%;         /* Muted text */
+
+    --accent: 45 85% 60%;                   /* Brighter golden yellow */
+    --accent-foreground: 30 25% 15%;        /* Dark text on yellow */
+
+    --destructive: 0 75% 50%;               /* Brighter red */
+    --destructive-foreground: 60 35% 90%;   /* Light text on red */
+
+    --border: 142 30% 15%;                  /* Darker border */
+    --input: 142 35% 12%;                   /* Darker input */
+    --ring: 142 75% 40%;                    /* Brighter focus ring */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
