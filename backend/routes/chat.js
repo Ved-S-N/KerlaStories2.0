@@ -1,12 +1,22 @@
+
 import express from "express";
 import fetch from "node-fetch";
 import ChatMessage from "../models/ChatMessage.js";
+import { franc } from "franc";
 
 const router = express.Router();
+
+export default router;
 
 // Gemini API call function
 async function getGeminiResponse(prompt, lang = "en") {
   try {
+    // Determine language instruction for Gemini
+    let langInstruction = "Reply in English:";
+    if (lang === "ml" || lang === "malayalam") {
+      langInstruction = "Reply in Malayalam:";
+    }
+
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
         process.env.GEMINI_API_KEY,
@@ -17,7 +27,7 @@ async function getGeminiResponse(prompt, lang = "en") {
           contents: [
             {
               role: "user",
-              parts: [{ text: `Reply in English: ${prompt}` }],
+              parts: [{ text: `${langInstruction} ${prompt}` }],
             },
           ],
         }),
@@ -52,6 +62,20 @@ router.post("/", async (req, res) => {
   console.log("Chat endpoint hit with body:", req.body);
 
   let reply;
+
+  // Detect language if not provided
+  let detectedLang = language;
+  if (!detectedLang) {
+    const langCode = franc(message);
+    if (langCode === "mal") {
+      detectedLang = "malayalam";
+    } else if (langCode === "eng") {
+      detectedLang = "english";
+    } else {
+      detectedLang = "english"; // default fallback
+    }
+  }
+
   // Check if user asks for helpline
   if (
     message.toLowerCase().includes("helpline") ||
@@ -64,7 +88,7 @@ Women: ${helplines.women}
 Tivari_sir: ${helplines.tivari_sir}
 Disaster: ${helplines.disaster}`;
   } else {
-    reply = await getGeminiResponse(message, language || "en");
+    reply = await getGeminiResponse(message, detectedLang);
   }
 
   // Save to MongoDB
@@ -72,7 +96,7 @@ Disaster: ${helplines.disaster}`;
     userId: userId || null,
     message,
     reply,
-    language: language || "en",
+    language: detectedLang || "english",
   });
 
   await chat.save();
@@ -93,4 +117,4 @@ router.get("/history/:userId", async (req, res) => {
   }
 });
 
-export default router;
+

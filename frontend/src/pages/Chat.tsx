@@ -14,6 +14,53 @@ import {
   VolumeX,
 } from "lucide-react";
 
+// Type declarations for Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
+interface SpeechRecognitionAPI extends EventTarget {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;
+  onend: () => void;
+  start(): void;
+  stop(): void;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
 const quickQuestions = [
   "What crops are suitable for Kerala monsoon season?",
   "How to apply for PM-KISAN scheme?",
@@ -32,10 +79,59 @@ type ChatMessage = {
 
 export default function Chat() {
   const [message, setMessage] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(true); // default mic ON (red)
   const [language, setLanguage] = useState("english");
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [isManuallyStopped, setIsManuallyStopped] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  // Speech recognition setup
+  const [recognition, setRecognition] = useState<SpeechRecognitionAPI | null>(null);
+
+  useEffect(() => {
+    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+      console.warn("Speech Recognition API not supported in this browser.");
+      return;
+    }
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognitionInstance = new SpeechRecognition() as SpeechRecognitionAPI;
+    recognitionInstance.lang = language === "english" ? "en-US" : "ml-IN";
+    recognitionInstance.interimResults = true;
+    recognitionInstance.continuous = true;
+
+    recognitionInstance.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setMessage(transcript);
+    };
+
+    recognitionInstance.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+      setIsRecording(false);
+      if (event.error === "network") {
+        // Retry recognition on network errors
+        recognitionInstance.stop();
+        recognitionInstance.start();
+      } else if (event.error === "not-allowed" || event.error === "permission-denied") {
+        alert("Microphone permission denied. Please allow microphone access.");
+      } else {
+        alert("Speech recognition error: " + event.error + ". Please check microphone permissions.");
+      }
+    };
+
+    recognitionInstance.onend = () => {
+      if (isManuallyStopped) {
+        setIsRecording(false);
+      }
+      // If not manually stopped, keep recording state as is
+    };
+
+    setRecognition(recognitionInstance);
+  }, [language]);
 
   const formatTime = () => {
     return new Date().toLocaleTimeString([], {
@@ -54,6 +150,7 @@ export default function Chat() {
       time: formatTime(),
     };
     setChatHistory((prev) => [...prev, userMessage]);
+    setIsTyping(true);
 
     try {
       const res = await fetch("http://localhost:3000/api/chat", {
@@ -87,6 +184,7 @@ export default function Chat() {
       ]);
     }
 
+    setIsTyping(false);
     setMessage("");
   };
 
@@ -116,7 +214,7 @@ export default function Chat() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-glow">
@@ -128,24 +226,27 @@ export default function Chat() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Chat Interface */}
-          <div className="lg:col-span-3">
+          <div>
             <Card className="bg-gradient-card h-[600px] flex flex-col">
-              <CardHeader className="border-b border-border">
+              <CardHeader className="border-b border-border bg-gradient-to-r from-card to-muted/20">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center animate-glow">
-                      <Bot className="h-5 w-5 text-primary-foreground" />
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg animate-glow">
+                      <Bot className="h-6 w-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg">
+                      <CardTitle className="text-xl font-semibold">
                         Agricultural AI Assistant
                       </CardTitle>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                      <p className="text-sm text-muted-foreground">
+                        Your farming companion
+                      </p>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                         <span className="text-xs text-muted-foreground">
-                          Online
+                          Online • Ready to help
                         </span>
                       </div>
                     </div>
@@ -156,6 +257,7 @@ export default function Chat() {
                       variant={language === "english" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setLanguage("english")}
+                      className="shadow-sm"
                     >
                       <Globe className="h-4 w-4 mr-1" />
                       EN
@@ -164,6 +266,7 @@ export default function Chat() {
                       variant={language === "malayalam" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setLanguage("malayalam")}
+                      className="shadow-sm"
                     >
                       <Globe className="h-4 w-4 mr-1" />
                       ML
@@ -172,6 +275,7 @@ export default function Chat() {
                       variant={audioEnabled ? "default" : "outline"}
                       size="sm"
                       onClick={() => setAudioEnabled(!audioEnabled)}
+                      className="shadow-sm"
                     >
                       {audioEnabled ? (
                         <Volume2 className="h-4 w-4" />
@@ -190,7 +294,7 @@ export default function Chat() {
                     key={index}
                     className={`flex ${
                       chat.type === "user" ? "justify-end" : "justify-start"
-                    }`}
+                    } animate-in slide-in-from-bottom-2 duration-300`}
                   >
                     <div
                       className={`flex items-start space-x-3 max-w-[80%] ${
@@ -200,53 +304,88 @@ export default function Chat() {
                       }`}
                     >
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
                           chat.type === "user"
                             ? "bg-primary"
                             : "bg-gradient-primary"
                         }`}
                       >
                         {chat.type === "user" ? (
-                          <User className="h-4 w-4 text-primary-foreground" />
+                          <User className="h-5 w-5 text-primary-foreground" />
                         ) : (
-                          <Bot className="h-4 w-4 text-primary-foreground" />
+                          <Bot className="h-5 w-5 text-primary-foreground" />
                         )}
                       </div>
                       <div
-                        className={`rounded-lg px-4 py-3 ${
+                        className={`rounded-2xl px-4 py-3 shadow-md ${
                           chat.type === "user"
                             ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
+                            : "bg-muted border border-border"
                         }`}
                       >
-                        <p className="text-sm whitespace-pre-line">
+                        <p className="text-sm whitespace-pre-line leading-relaxed">
                           {chat.message}
                         </p>
-                        <p className="text-xs opacity-70 mt-1">{chat.time}</p>
+                        <p className="text-xs opacity-70 mt-2">{chat.time}</p>
                       </div>
                     </div>
                   </div>
                 ))}
+                {isTyping && (
+                  <div className="flex justify-start animate-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex items-start space-x-3 max-w-[80%]">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg bg-gradient-primary">
+                        <Bot className="h-5 w-5 text-primary-foreground" />
+                      </div>
+                      <div className="rounded-2xl px-4 py-3 bg-muted border border-border shadow-md">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
 
               {/* Input Area */}
-              <div className="border-t border-border p-4">
-                <div className="flex items-center space-x-2">
-                  <Input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder={
-                      language === "english"
-                        ? "Ask me anything about farming..."
-                        : "കൃഷിയെക്കുറിച്ച് എന്തെങ്കിലും ചോദിക്കൂ..."
-                    }
-                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                    className="flex-1"
-                  />
+              <div className="border-t border-border p-4 bg-gradient-to-r from-card to-muted/10">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1 relative">
+                    <Input
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder={
+                        language === "english"
+                          ? "Ask me anything about farming..."
+                          : "കൃഷിയെക്കുറിച്ച് എന്തെങ്കിലും ചോദിക്കൂ..."
+                      }
+                      onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                      className="pr-10 shadow-sm border-border focus:ring-2 focus:ring-primary/20"
+                    />
+                    {message.trim() && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <span className="text-xs text-muted-foreground">Press Enter</span>
+                      </div>
+                    )}
+                  </div>
                   <Button
                     variant={isRecording ? "destructive" : "outline"}
                     size="sm"
-                    onClick={() => setIsRecording(!isRecording)}
+                    onClick={() => {
+                      if (isRecording) {
+                        setIsManuallyStopped(true);
+                        recognition?.stop();
+                        setIsRecording(false);
+                      } else {
+                        setIsManuallyStopped(false);
+                        recognition?.start();
+                        setIsRecording(true);
+                      }
+                    }}
+                    className="shadow-sm hover:shadow-md transition-shadow"
+                    aria-label={isRecording ? "Stop recording" : "Start recording"}
                   >
                     {isRecording ? (
                       <MicOff className="h-4 w-4" />
@@ -254,7 +393,11 @@ export default function Chat() {
                       <Mic className="h-4 w-4" />
                     )}
                   </Button>
-                  <Button onClick={handleSend} disabled={!message.trim()}>
+                  <Button
+                    onClick={handleSend}
+                    disabled={!message.trim()}
+                    className="shadow-sm hover:shadow-md transition-shadow"
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -263,79 +406,7 @@ export default function Chat() {
           </div>
 
           {/* Quick Actions Sidebar */}
-          <div className="space-y-6">
-            <Card className="bg-gradient-card">
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Questions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {quickQuestions.map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="w-full text-left justify-start h-auto p-3 text-sm hover:bg-muted"
-                    onClick={() => setMessage(question)}
-                  >
-                    {question}
-                  </Button>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Features */}
-            <Card className="bg-gradient-card">
-              <CardHeader>
-                <CardTitle className="text-lg">AI Features</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    ✨
-                  </Badge>
-                  <span className="text-sm">Scheme Recommendations</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    🌦️
-                  </Badge>
-                  <span className="text-sm">Weather Alerts</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    📊
-                  </Badge>
-                  <span className="text-sm">Market Prices</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    🌱
-                  </Badge>
-                  <span className="text-sm">Crop Advice</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    🎯
-                  </Badge>
-                  <span className="text-sm">Bilingual Support</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    🎤
-                  </Badge>
-                  <span className="text-sm">Voice Interaction</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-primary text-primary-foreground">
-              <CardContent className="p-4 text-center">
-                <h4 className="font-semibold mb-2">Powered by Gemini AI</h4>
-                <p className="text-xs opacity-90">
-                  Advanced language model for accurate agricultural guidance
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Removed Quick Questions and AI Features sidebar as per request */}
         </div>
       </div>
     </div>

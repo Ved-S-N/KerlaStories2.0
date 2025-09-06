@@ -1,19 +1,8 @@
-# TODO: Amazon-like Selling Page Implementation
+# Chat Page Visual Upgrade TODO
 
-## Completed Tasks
-
-- [ ] Analyze current Deals.tsx and backend routes
-- [ ] Create comprehensive plan
-
-## Pending Tasks
-
-- [x] Create cart context and hook (useCart.tsx, CartContext.tsx)
-- [x] Create AddProduct page with form
-- [x] Update Deals.tsx to fetch from API and remove dummy data
-- [x] Implement add to cart functionality
-- [x] Add navigation for Add Product and View Cart
-- [ ] Create cart modal/page
-- [x] Update App.tsx with new routes
-- [ ] Test API integration
-- [ ] Implement cart persistence
-- [ ] Add product image handling
+- [x] Add typing indicator for bot responses
+- [x] Enhance message bubble styling with better shadows and spacing
+- [x] Improve header with more visual elements and status
+- [x] Add subtle animations for message appearance
+- [x] Enhance input area styling and UX
+- [x] Improve overall layout and readability
