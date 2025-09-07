@@ -1,24 +1,25 @@
-# TODO: Add Chat History Sidebar
+# TODO: Implement User Authentication with Prisma and Azure SQL
 
-## Backend Changes
+## Backend Tasks
 
-- [ ] Update ChatMessage model to include sessionId
-- [ ] Modify POST /chat to handle sessionId (generate if missing)
-- [ ] Add GET /sessions/:userId endpoint
-- [ ] Update GET /history/:userId to support sessionId filter
+- [x] Update backend/routes/users.js:
+  - Add POST /signup route: validate input, hash password with bcrypt, save to Prisma User table, handle errors.
+  - Add POST /signin route: validate email/password, generate JWT, return token and user info.
+- [x] Ensure backend has bcrypt and jsonwebtoken dependencies installed.
+- [x] Verify Prisma client is initialized in server.js.
 
-## Frontend Changes
+## Frontend Tasks
 
-- [ ] Add state for currentSessionId and sessions list
-- [ ] Fetch sessions on component mount
-- [ ] Create sidebar component for session history
-- [ ] Handle session click to load messages
-- [ ] Include sessionId in message sends
-- [ ] Adjust layout for sidebar (grid layout)
-- [ ] Preserve existing functionality (speech, language, etc.)
+- [x] Update frontend/src/lib/auth.ts:
+  - Replace mock signUp with API call to /signup.
+  - Replace mock signIn with API call to /signin, store JWT token.
+- [x] Update frontend/src/pages/SignUp.tsx:
+  - On success, redirect to /dashboard.
+- [x] Update frontend/src/pages/SignIn.tsx:
+  - On success, redirect to /dashboard.
 
 ## Testing
 
-- [ ] Test backend endpoints
-- [ ] Test frontend UI and interactions
-- [ ] Ensure no regressions
+- [ ] Test signup flow: create user, store in DB, redirect to dashboard.
+- [ ] Test signin flow: validate credentials, login, redirect to dashboard.
+- [ ] Handle errors: duplicate email, wrong password, missing fields.

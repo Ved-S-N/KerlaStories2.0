@@ -460,17 +460,18 @@ export default function Chat() {
                                   }`}
                                 ></div>
                                 <p
-                                  className={`text-sm font-semibold truncate ${
+                                  className={`text-sm font-semibold truncate leading-tight ${
                                     currentSessionId === session.sessionId
                                       ? "text-primary-foreground"
                                       : "text-foreground group-hover:text-primary"
                                   }`}
+                                  title={session.heading || `Chat ${index + 1}`}
                                 >
                                   {session.heading || `Chat ${index + 1}`}
                                 </p>
                               </div>
                               <p
-                                className={`text-xs mb-3 truncate ${
+                                className={`text-xs mb-3 truncate leading-tight ${
                                   currentSessionId === session.sessionId
                                     ? "text-primary-foreground/90"
                                     : "text-muted-foreground group-hover:text-muted-foreground/80"
@@ -511,7 +512,7 @@ export default function Chat() {
                                 />
                               </button>
                               {openMenuId === session.sessionId && (
-                                <div className="absolute right-0 mt-2 w-36 rounded-md bg-green-900 shadow-2xl border border-green-700 backdrop-blur-md z-[10000]">
+                                <div className="absolute right-0 mt-2 w-36 rounded-md bg-green-900 shadow-2xl border border-green-700 backdrop-blur-md z-[99999]">
                                   <button className="w-full text-left px-3 py-2 text-xs text-white hover:bg-green-800 rounded-t-md transition-colors">
                                     Share
                                   </button>
@@ -643,7 +644,7 @@ export default function Chat() {
                     } animate-in slide-in-from-bottom-2 duration-300`}
                   >
                     <div
-                      className={`flex items-start space-x-3 max-w-[85%] min-w-0 ${
+                      className={`flex items-start space-x-3 max-w-full min-w-0 ${
                         chat.type === "user"
                           ? "flex-row-reverse space-x-reverse"
                           : ""
@@ -663,7 +664,7 @@ export default function Chat() {
                         )}
                       </div>
                       <div
-                        className={`rounded-2xl px-4 py-3 shadow-md min-w-0 ${
+                        className={`rounded-2xl px-4 py-3 shadow-md min-w-0 break-words w-full ${
                           chat.type === "user"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted border border-border"
@@ -716,11 +717,11 @@ export default function Chat() {
                 ))}
                 {isTyping && (
                   <div className="flex justify-start animate-in slide-in-from-bottom-2 duration-300">
-                    <div className="flex items-start space-x-3 max-w-[85%] min-w-0">
+                    <div className="flex items-start space-x-3 max-w-full min-w-0">
                       <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg bg-gradient-primary flex-shrink-0">
                         <Bot className="h-5 w-5 text-primary-foreground" />
                       </div>
-                      <div className="rounded-2xl px-4 py-3 bg-muted border border-border shadow-md">
+                      <div className="rounded-2xl px-4 py-3 bg-muted border border-border shadow-md w-full">
                         <div className="flex space-x-1">
                           <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
                           <div

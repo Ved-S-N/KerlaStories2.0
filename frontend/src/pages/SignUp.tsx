@@ -1,31 +1,45 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Leaf, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { auth } from '@/lib/auth';
-import { SignUpData } from '@/types/user';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Leaf, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { auth } from "@/lib/auth";
+import { SignUpData } from "@/types/user";
 
-const signUpSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
-  phone: z.string().optional(),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-  role: z.enum(['farmer', 'admin', 'expert'], {
-    required_error: 'Please select a role',
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const signUpSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Please enter a valid email address"),
+    phone: z.string().optional(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+    role: z.enum(["farmer", "admin", "expert"], {
+      required_error: "Please select a role",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type SignUpForm = z.infer<typeof signUpSchema>;
 
@@ -53,9 +67,9 @@ export default function SignUp() {
     try {
       const user = await auth.signUp(data as SignUpData);
       auth.setCurrentUser(user);
-      navigate('/');
+      navigate("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +83,9 @@ export default function SignUp() {
             <Leaf className="h-8 w-8 text-primary-foreground" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold text-gray-900">Join Kerala AgriTech</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Join Kerala AgriTech
+            </CardTitle>
             <CardDescription className="text-gray-600">
               Create your account to access agricultural services
             </CardDescription>
@@ -90,8 +106,8 @@ export default function SignUp() {
                 id="name"
                 type="text"
                 placeholder="Enter your full name"
-                {...register('name')}
-                className={errors.name ? 'border-red-500' : ''}
+                {...register("name")}
+                className={errors.name ? "border-red-500" : ""}
               />
               {errors.name && (
                 <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -104,8 +120,8 @@ export default function SignUp() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
+                {...register("email")}
+                className={errors.email ? "border-red-500" : ""}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -118,8 +134,8 @@ export default function SignUp() {
                 id="phone"
                 type="tel"
                 placeholder="Enter your phone number"
-                {...register('phone')}
-                className={errors.phone ? 'border-red-500' : ''}
+                {...register("phone")}
+                className={errors.phone ? "border-red-500" : ""}
               />
               {errors.phone && (
                 <p className="text-sm text-red-500">{errors.phone.message}</p>
@@ -128,8 +144,12 @@ export default function SignUp() {
 
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select onValueChange={(value) => setValue('role', value as 'farmer' | 'admin' | 'expert')}>
-                <SelectTrigger className={errors.role ? 'border-red-500' : ''}>
+              <Select
+                onValueChange={(value) =>
+                  setValue("role", value as "farmer" | "admin" | "expert")
+                }
+              >
+                <SelectTrigger className={errors.role ? "border-red-500" : ""}>
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -148,10 +168,10 @@ export default function SignUp() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Create a password"
-                  {...register('password')}
-                  className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                  {...register("password")}
+                  className={errors.password ? "border-red-500 pr-10" : "pr-10"}
                 />
                 <Button
                   type="button"
@@ -168,7 +188,9 @@ export default function SignUp() {
                 </Button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -177,10 +199,12 @@ export default function SignUp() {
               <div className="relative">
                 <Input
                   id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
-                  {...register('confirmPassword')}
-                  className={errors.confirmPassword ? 'border-red-500 pr-10' : 'pr-10'}
+                  {...register("confirmPassword")}
+                  className={
+                    errors.confirmPassword ? "border-red-500 pr-10" : "pr-10"
+                  }
                 />
                 <Button
                   type="button"
@@ -197,7 +221,9 @@ export default function SignUp() {
                 </Button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 
@@ -208,14 +234,14 @@ export default function SignUp() {
                   Creating account...
                 </>
               ) : (
-                'Create Account'
+                "Create Account"
               )}
             </Button>
           </form>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <Link
                 to="/signin"
                 className="text-primary hover:text-primary/80 font-medium"

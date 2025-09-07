@@ -1,20 +1,26 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Leaf, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { auth } from '@/lib/auth';
-import { SignInData } from '@/types/user';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Leaf, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { auth } from "@/lib/auth";
+import { SignInData } from "@/types/user";
 
 const signInSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type SignInForm = z.infer<typeof signInSchema>;
@@ -40,9 +46,9 @@ export default function SignIn() {
     try {
       const user = await auth.signIn(data as SignInData);
       auth.setCurrentUser(user);
-      navigate('/');
+      navigate("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +62,9 @@ export default function SignIn() {
             <Leaf className="h-8 w-8 text-primary-foreground" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold text-gray-900">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Welcome Back
+            </CardTitle>
             <CardDescription className="text-gray-600">
               Sign in to your Kerala AgriTech account
             </CardDescription>
@@ -77,8 +85,8 @@ export default function SignIn() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
+                {...register("email")}
+                className={errors.email ? "border-red-500" : ""}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -90,10 +98,10 @@ export default function SignIn() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  {...register('password')}
-                  className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                  {...register("password")}
+                  className={errors.password ? "border-red-500 pr-10" : "pr-10"}
                 />
                 <Button
                   type="button"
@@ -110,7 +118,9 @@ export default function SignIn() {
                 </Button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -121,14 +131,14 @@ export default function SignIn() {
                   Signing in...
                 </>
               ) : (
-                'Sign In'
+                "Sign In"
               )}
             </Button>
           </form>
 
           <div className="text-center space-y-2">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link
                 to="/signup"
                 className="text-primary hover:text-primary/80 font-medium"

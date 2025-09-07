@@ -1,71 +1,65 @@
-import { User, SignInData, SignUpData } from '@/types/user';
+import { User, SignInData, SignUpData } from "@/types/user";
 
-// Mock auth functions - replace with actual API calls
+const API_BASE_URL = "http://localhost:3000/api";
+
 export const auth = {
   async signIn(data: SignInData): Promise<User> {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const response = await fetch(`${API_BASE_URL}/users/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-    // Mock validation
-    if (data.email === 'admin@keralaagritech.com' && data.password === 'password') {
-      return {
-        id: '1',
-        email: data.email,
-        name: 'Admin User',
-        role: 'admin',
-        createdAt: new Date(),
-      };
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Signin failed");
     }
 
-    if (data.email === 'farmer@keralaagritech.com' && data.password === 'password') {
-      return {
-        id: '2',
-        email: data.email,
-        name: 'Farmer User',
-        role: 'farmer',
-        createdAt: new Date(),
-      };
-    }
+    const result = await response.json();
+    const { token, user } = result;
 
-    throw new Error('Invalid credentials');
+    // Store token and user in localStorage
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    return user;
   },
 
   async signUp(data: SignUpData): Promise<User> {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const response = await fetch(`${API_BASE_URL}/users/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-    // Mock validation
-    if (data.password !== data.confirmPassword) {
-      throw new Error('Passwords do not match');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Signup failed");
     }
 
-    // Check if user already exists
-    if (data.email === 'admin@keralaagritech.com' || data.email === 'farmer@keralaagritech.com') {
-      throw new Error('User already exists');
-    }
-
-    return {
-      id: Math.random().toString(36).substr(2, 9),
-      email: data.email,
-      name: data.name,
-      phone: data.phone,
-      role: data.role,
-      createdAt: new Date(),
-    };
+    const result = await response.json();
+    return result.user;
   },
 
   async signOut(): Promise<void> {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   },
 
   getCurrentUser(): User | null {
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem("user");
     return userStr ? JSON.parse(userStr) : null;
   },
 
   setCurrentUser(user: User): void {
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
+  },
+
+  getToken(): string | null {
+    return localStorage.getItem("token");
   },
 };
