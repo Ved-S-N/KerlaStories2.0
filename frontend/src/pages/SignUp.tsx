@@ -24,6 +24,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { auth } from "@/lib/auth";
 import { SignUpData } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 
 const signUpSchema = z
   .object({
@@ -49,6 +50,7 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { dispatch } = useAuth();
 
   const {
     register,
@@ -67,7 +69,8 @@ export default function SignUp() {
     try {
       const user = await auth.signUp(data as SignUpData);
       auth.setCurrentUser(user);
-      navigate("/dashboard");
+      dispatch({ type: "SET_USER", user });
+      navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

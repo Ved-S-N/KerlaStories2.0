@@ -1,11 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Menu,
-  X,
   Leaf,
   User,
-  MessageCircle,
-  FileText,
   Scale,
   Newspaper,
   AlertTriangle,
@@ -13,7 +10,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/", icon: Leaf },
@@ -26,9 +24,46 @@ const navigation = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { state, dispatch } = useAuth();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleSignOut = () => {
+    dispatch({ type: "SIGN_OUT" });
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/signin");
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Get initial from user's full name
+  const getUserInitial = () => {
+    if (!state.user || !state.user.name) return "";
+    return state.user.name.charAt(0).toUpperCase();
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
@@ -69,13 +104,49 @@ export function Navbar() {
           </div>
 
           {/* User Menu */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <Link to="/signin">
-              <Button variant="outline" size="sm">
-                <User className="h-4 w-4 mr-2" />
-                Sign In
-              </Button>
-            </Link>
+          <div className="hidden lg:flex items-center space-x-4 relative">
+            {!state.isAuthenticated ? (
+              <Link to="/signin">
+                <Button variant="outline" size="sm">
+                  <User className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+            ) : (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={toggleDropdown}
+                  className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white font-bold focus:outline-none"
+                  aria-label="User menu"
+                >
+                  {getUserInitial()}
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-40 rounded-lg bg-green-900 shadow-lg text-white z-50">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 hover:bg-green-800"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 py-2 hover:bg-green-800"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 hover:bg-green-800"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -106,12 +177,57 @@ export function Navbar() {
                   );
                 })}
                 <div className="pt-4 border-t border-border">
-                  <Link to="/signin" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full" size="lg">
-                      <User className="h-4 w-4 mr-2" />
-                      Sign In
-                    </Button>
-                  </Link>
+                  {!state.isAuthenticated ? (
+                    <Link to="/signin" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full" size="lg">
+                        <User className="h-4 w-4 mr-2" />
+                        Sign In
+                      </Button>
+                    </Link>
+                  ) : (
+                    <div className="relative" ref={dropdownRef}>
+                      <button
+                        onClick={toggleDropdown}
+                        className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white font-bold focus:outline-none"
+                        aria-label="User menu"
+                      >
+                        {getUserInitial()}
+                      </button>
+                      {dropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-40 rounded-lg bg-green-900 shadow-lg text-white z-50">
+                          <Link
+                            to="/profile"
+                            className="block px-4 py-2 hover:bg-green-800"
+                            onClick={() => {
+                              setDropdownOpen(false);
+                              setIsOpen(false);
+                            }}
+                          >
+                            Profile
+                          </Link>
+                          <Link
+                            to="/dashboard"
+                            className="block px-4 py-2 hover:bg-green-800"
+                            onClick={() => {
+                              setDropdownOpen(false);
+                              setIsOpen(false);
+                            }}
+                          >
+                            Dashboard
+                          </Link>
+                          <button
+                            onClick={() => {
+                              handleSignOut();
+                              setIsOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 hover:bg-green-800"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </SheetContent>

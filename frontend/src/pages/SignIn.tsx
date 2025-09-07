@@ -17,6 +17,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { auth } from "@/lib/auth";
 import { SignInData } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -30,6 +31,7 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { dispatch } = useAuth();
 
   const {
     register,
@@ -46,7 +48,8 @@ export default function SignIn() {
     try {
       const user = await auth.signIn(data as SignInData);
       auth.setCurrentUser(user);
-      navigate("/dashboard");
+      dispatch({ type: "SET_USER", user });
+      navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

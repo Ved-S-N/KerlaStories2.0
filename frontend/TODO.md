@@ -1,25 +1,13 @@
-# TODO: Implement User Authentication with Prisma and Azure SQL
+# Navbar Update Plan
 
-## Backend Tasks
+## Tasks
 
-- [x] Update backend/routes/users.js:
-  - Add POST /signup route: validate input, hash password with bcrypt, save to Prisma User table, handle errors.
-  - Add POST /signin route: validate email/password, generate JWT, return token and user info.
-- [x] Ensure backend has bcrypt and jsonwebtoken dependencies installed.
-- [x] Verify Prisma client is initialized in server.js.
-
-## Frontend Tasks
-
-- [x] Update frontend/src/lib/auth.ts:
-  - Replace mock signUp with API call to /signup.
-  - Replace mock signIn with API call to /signin, store JWT token.
-- [x] Update frontend/src/pages/SignUp.tsx:
-  - On success, redirect to /dashboard.
-- [x] Update frontend/src/pages/SignIn.tsx:
-  - On success, redirect to /dashboard.
-
-## Testing
-
-- [ ] Test signup flow: create user, store in DB, redirect to dashboard.
-- [ ] Test signin flow: validate credentials, login, redirect to dashboard.
-- [ ] Handle errors: duplicate email, wrong password, missing fields.
+- [x] Import useAuth from AuthContext and useNavigate from react-router-dom
+- [x] Add state for dropdown open/close using useState
+- [x] Add useEffect for event listener to close dropdown on outside clicks
+- [x] Conditionally render user menu: Sign In button if not authenticated, avatar with dropdown if authenticated
+- [x] Implement avatar circle with user initial using Tailwind classes
+- [x] Implement dropdown menu with Profile, Dashboard, Sign Out options using Tailwind classes
+- [x] Handle Sign Out: dispatch SIGN_OUT, clear local storage, redirect to /signin
+- [x] Update mobile view to show avatar instead of Sign In if authenticated
+- [x] Test the implementation for proper behavior
