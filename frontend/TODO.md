@@ -1,8 +1,24 @@
-# Chat Page Visual Upgrade TODO
+# TODO: Add Chat History Sidebar
 
-- [x] Add typing indicator for bot responses
-- [x] Enhance message bubble styling with better shadows and spacing
-- [x] Improve header with more visual elements and status
-- [x] Add subtle animations for message appearance
-- [x] Enhance input area styling and UX
-- [x] Improve overall layout and readability
+## Backend Changes
+
+- [ ] Update ChatMessage model to include sessionId
+- [ ] Modify POST /chat to handle sessionId (generate if missing)
+- [ ] Add GET /sessions/:userId endpoint
+- [ ] Update GET /history/:userId to support sessionId filter
+
+## Frontend Changes
+
+- [ ] Add state for currentSessionId and sessions list
+- [ ] Fetch sessions on component mount
+- [ ] Create sidebar component for session history
+- [ ] Handle session click to load messages
+- [ ] Include sessionId in message sends
+- [ ] Adjust layout for sidebar (grid layout)
+- [ ] Preserve existing functionality (speech, language, etc.)
+
+## Testing
+
+- [ ] Test backend endpoints
+- [ ] Test frontend UI and interactions
+- [ ] Ensure no regressions

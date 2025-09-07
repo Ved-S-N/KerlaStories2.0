@@ -1,8 +1,8 @@
-
 import express from "express";
 import fetch from "node-fetch";
 import ChatMessage from "../models/ChatMessage.js";
 import { franc } from "franc";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
@@ -58,8 +58,13 @@ const helplines = {
 // Chat API
 router.post("/", async (req, res) => {
   console.log("🔥 Chat endpoint hit with body:", req.body);
-  const { message, language, userId } = req.body;
+  const { message, language, userId, sessionId } = req.body;
   console.log("Chat endpoint hit with body:", req.body);
+
+  let currentSessionId = sessionId;
+  if (!currentSessionId) {
+    currentSessionId = uuidv4();
+  }
 
   let reply;
 
@@ -94,6 +99,7 @@ Disaster: ${helplines.disaster}`;
   // Save to MongoDB
   const chat = new ChatMessage({
     userId: userId || null,
+    sessionId: currentSessionId,
     message,
     reply,
     language: detectedLang || "english",
@@ -101,15 +107,22 @@ Disaster: ${helplines.disaster}`;
 
   await chat.save();
 
-  res.json({ reply });
+  res.json({ reply, sessionId: currentSessionId });
 });
 
 // Fetch chat history
 router.get("/history/:userId", async (req, res) => {
   try {
-    const history = await ChatMessage.find({ userId: req.params.userId })
+    const { sessionId } = req.query;
+    const query = { userId: req.params.userId };
+    if (sessionId) {
+      query.sessionId = sessionId;
+    }
+    console.log("Fetching chat history with query:", query);
+    const history = await ChatMessage.find(query)
       .sort({ createdAt: -1 })
       .limit(20);
+    console.log("Chat history found:", history.length, "messages");
     res.json(history);
   } catch (err) {
     console.error("Fetch history error:", err);
@@ -117,4 +130,54 @@ router.get("/history/:userId", async (req, res) => {
   }
 });
 
+// Fetch chat sessions
+router.get("/sessions/:userId", async (req, res) => {
+  try {
+    console.log("Fetching sessions for userId:", req.params.userId);
+    const sessions = await ChatMessage.aggregate([
+      { $match: { userId: req.params.userId } },
+      {
+        $group: {
+          _id: "$sessionId",
+          firstMessage: { $first: "$message" },
+          createdAt: { $min: "$createdAt" },
+          messageCount: { $sum: 1 },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $limit: 50 },
+    ]);
+    console.log("Sessions found:", sessions.length);
+    const result = sessions.map((s) => ({
+      sessionId: s._id,
+      heading:
+        s.firstMessage.length > 50
+          ? s.firstMessage.substring(0, 50) + "..."
+          : s.firstMessage,
+      createdAt: s.createdAt,
+      messageCount: s.messageCount,
+    }));
+    console.log("Sessions result:", result);
+    res.json(result);
+  } catch (err) {
+    console.error("Fetch sessions error:", err);
+    res.status(500).json({ error: "Failed to fetch sessions" });
+  }
+});
 
+// Delete a session and its messages
+router.delete("/sessions/:sessionId", async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    // Delete all messages in the session
+    await ChatMessage.deleteMany({
+      sessionId: sessionId,
+    });
+
+    res.json({ message: "Session deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting session:", error);
+    res.status(500).json({ error: "Failed to delete session" });
+  }
+});
