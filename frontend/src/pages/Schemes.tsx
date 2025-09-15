@@ -78,7 +78,8 @@ export default function Schemes() {
   useEffect(() => {
     const fetchSchemes = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/schemes");
+        const baseURL = import.meta.env.VITE_API_BASE_URL;
+        const res = await fetch(`${baseURL}/api/schemes`);
         if (!res.ok) throw new Error("Failed to fetch schemes");
         const data = await res.json();
 

@@ -53,10 +53,24 @@ export default function Deals() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error("Failed to fetch products:", err));
+    const fetchProducts = async () => {
+      try {
+        // --- THIS IS THE CHANGE ---
+        const baseURL = import.meta.env.VITE_API_BASE_URL;
+        const res = await fetch(`${baseURL}/api/products`);
+        // -------------------------
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products data:", err);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const filteredProducts =

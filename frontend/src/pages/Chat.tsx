@@ -231,7 +231,9 @@ export default function Chat() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:3000/api/chat", {
+      // --- THIS IS THE CHANGE (1 of 5) ---
+      const baseURL = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${baseURL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -248,8 +250,9 @@ export default function Chat() {
       if (data.sessionId && data.sessionId !== currentSessionId) {
         setCurrentSessionId(data.sessionId);
         // Refresh sessions list
+        // --- THIS IS THE CHANGE (2 of 5) ---
         const sessionsRes = await fetch(
-          "http://localhost:3000/api/chat/sessions/64f1e6f9c9b2ad9c39a5f00a"
+          `${baseURL}/api/chat/sessions/64f1e6f9c9b2ad9c39a5f00a`
         );
         const sessionsData = await sessionsRes.json();
         setSessions(sessionsData);
@@ -281,8 +284,10 @@ export default function Chat() {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
+        // --- THIS IS THE CHANGE (3 of 5) ---
+        const baseURL = import.meta.env.VITE_API_BASE_URL;
         const res = await fetch(
-          "http://localhost:3000/api/chat/sessions/64f1e6f9c9b2ad9c39a5f00a"
+          `${baseURL}/api/chat/sessions/64f1e6f9c9b2ad9c39a5f00a`
         );
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -302,8 +307,10 @@ export default function Chat() {
 
   const refreshSessions = async () => {
     try {
+      // --- THIS IS THE CHANGE (4 of 5) ---
+      const baseURL = import.meta.env.VITE_API_BASE_URL;
       const res = await fetch(
-        "http://localhost:3000/api/chat/sessions/64f1e6f9c9b2ad9c39a5f00a"
+        `${baseURL}/api/chat/sessions/64f1e6f9c9b2ad9c39a5f00a`
       );
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -318,12 +325,11 @@ export default function Chat() {
 
   const handleDeleteSession = async (sessionId: string) => {
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/chat/sessions/${sessionId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      // --- THIS IS THE CHANGE (5 of 5) ---
+      const baseURL = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${baseURL}/api/chat/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
         // Remove from state
         setSessions((prev) => prev.filter((s) => s.sessionId !== sessionId));
@@ -343,8 +349,9 @@ export default function Chat() {
   const fetchChatHistory = async (sessionId: string) => {
     console.log("Loading chat history for session:", sessionId);
     try {
+      const baseURL = import.meta.env.VITE_API_BASE_URL;
       const res = await fetch(
-        `http://localhost:3000/api/chat/history/64f1e6f9c9b2ad9c39a5f00a?sessionId=${sessionId}`
+        `${baseURL}/api/chat/history/64f1e6f9c9b2ad9c39a5f00a?sessionId=${sessionId}`
       );
       const data = await res.json();
       console.log("Chat history data received:", data);
