@@ -1,10 +1,9 @@
 import { User, SignInData, SignUpData } from "@/types/user";
 
-const API_BASE_URL = "http://localhost:3000/api";
-
 export const auth = {
   async signIn(data: SignInData): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/users/signin`, {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await fetch(`${baseURL}/api/users/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +27,8 @@ export const auth = {
   },
 
   async signUp(data: SignUpData): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/users/signup`, {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await fetch(`${baseURL}/api/users/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
