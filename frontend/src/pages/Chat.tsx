@@ -513,15 +513,6 @@ export default function Chat() {
                               </button>
                               {openMenuId === session.sessionId && (
                                 <div className="absolute right-0 mt-2 w-36 rounded-md bg-green-900 shadow-2xl border border-green-700 backdrop-blur-md z-[99999]">
-                                  <button className="w-full text-left px-3 py-2 text-xs text-white hover:bg-green-800 rounded-t-md transition-colors">
-                                    Share
-                                  </button>
-                                  <button className="w-full text-left px-3 py-2 text-xs text-white hover:bg-green-800 transition-colors">
-                                    Rename
-                                  </button>
-                                  <button className="w-full text-left px-3 py-2 text-xs text-white hover:bg-green-800 transition-colors">
-                                    Archive
-                                  </button>
                                   <button
                                     onClick={() =>
                                       handleDeleteSession(session.sessionId)
