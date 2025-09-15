@@ -11,16 +11,28 @@ import usersRoutes from "./routes/users.js";
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
-
 const prisma = new PrismaClient();
+
+// --- Connect to Databases at the Top Level ---
+// This code runs once when the serverless function starts
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("Connected to MongoDB!"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+prisma
+  .$connect()
+  .then(() => console.log("Connected to Azure SQL via Prisma!"))
+  .catch((err) => console.error("Prisma connection error:", err));
+// ---------------------------------------------
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// IMPORTANT: Update your CORS origin for production
 app.use(
   cors({
-    origin: "http://localhost:8080",
+    origin: process.env.FRONTEND_URL || "http://localhost:8080", // Use an environment variable
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
@@ -31,23 +43,5 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/schemes", schemesRoutes);
 app.use("/api/users", usersRoutes);
 
-const connectMongoDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URL);
-    console.log("Connected to MongoDB!");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-  }
-};
-
-app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
-  await connectMongoDB();
-
-  try {
-    await prisma.$connect();
-    console.log("Connected to Azure SQL via Prisma!");
-  } catch (err) {
-    console.error("Prisma connection error:", err);
-  }
-});
+// Export the app for Vercel
+export default app;
