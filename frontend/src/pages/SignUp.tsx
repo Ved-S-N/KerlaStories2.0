@@ -33,7 +33,7 @@ const signUpSchema = z
     phone: z.string().optional(),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
-    role: z.enum(["farmer", "admin", "expert"], {
+    role: z.enum(["farmer", "admin", "seller"], {
       required_error: "Please select a role",
     }),
   })
@@ -170,7 +170,7 @@ export default function SignUp() {
                 </Label>
                 <Select
                   onValueChange={(value) =>
-                    setValue("role", value as "farmer" | "admin" | "expert")
+                    setValue("role", value as "farmer" | "admin" | "seller")
                   }
                 >
                   <SelectTrigger
@@ -181,7 +181,7 @@ export default function SignUp() {
                   <SelectContent>
                     <SelectItem value="farmer">Farmer</SelectItem>
                     <SelectItem value="admin">Administrator</SelectItem>
-                    <SelectItem value="expert">Agricultural Expert</SelectItem>
+                    <SelectItem value="seller">Seller</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.role && (

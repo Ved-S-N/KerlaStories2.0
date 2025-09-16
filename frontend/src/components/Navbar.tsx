@@ -14,12 +14,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
-  { name: "Home", href: "/", icon: Leaf },
+  { name: "Home", href: "/", icon: Menu },
   { name: "Market Access", href: "/deals", icon: Leaf },
   { name: "Legal Actions", href: "/legal", icon: Scale },
   { name: "News", href: "/news", icon: Newspaper },
-  { name: "Weather Alerts", href: "/alerts", icon: AlertTriangle },
-  { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+  { name: "Schemes", href: "/schemes", icon: AlertTriangle },
+  { name: "AI Assistant", href: "/chat", icon: BarChart3 },
 ];
 
 export function Navbar() {
@@ -75,7 +75,7 @@ export function Navbar() {
               <Leaf className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-glow">Kerala AgriTech</h1>
+              <h1 className="text-xl font-bold text-glow">FarmEasy</h1>
               <p className="text-xs text-muted-foreground">
                 Smart India Hackathon
               </p>
