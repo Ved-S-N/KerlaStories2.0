@@ -75,7 +75,7 @@ export function Navbar() {
               <Leaf className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-glow">FarmEasy</h1>
+              <h1 className="text-xl font-bold text-glow">FarmEazy</h1>
               <p className="text-xs text-muted-foreground">
                 Smart India Hackathon
               </p>
